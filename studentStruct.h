@@ -29,7 +29,8 @@ bool Kill(Student *student);
 //bool AddSubjects(Student &student,const string _subject,const string _mark);
 bool AddSubjects(Student &student, const string subjectMarks);
 bool PrintStudent(const Student &student);
-bool ReadFileStudents(const string filePath, Student ***students, const int maxStudentsCount, int *studentsCount);
-bool addConcoleError(const string error, const int color);
-string ToString(const Student &student);
+bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsCount, Student ***newStudents, int newStudentsCount);
+bool AddStudentsFromFile(const string filePath, Student ***students, const int maxStudentsCount, int *studentsCount);
+bool AddConsoleTextColor(const string error, const int color);
+string StudentToString(const Student &student);
 #endif // !_MYSTRUCT_H_

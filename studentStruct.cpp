@@ -27,6 +27,7 @@ Student *Create()
 
 bool Clear(Student &student)
 {
+	student.valid = false;
 	student.fio = "";
 	student.group = "";
 	student.subjCount = 0;
@@ -42,53 +43,32 @@ bool Kill(Student *student)
 	return true;
 }
 
-bool PrintStudent(const Student &student)
-{
-	if (student.valid) {
-		cout.width(62);
-		cout.fill('_');
-		cout << "" << endl;
-		cout.fill(' ');
-		cout << left << "Студент: " + student.fio << endl;
-		cout << left << "Группа: " + student.group << endl;
-		cout << left << "ОЦЕНКИ" << endl;
-		cout.fill('_');
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, 10);
-		cout.width(62);
-		cout << "" << endl;
-		cout.width(50);
-		cout << left << "|ПРЕДМЕТ" << right << "|";
-		cout.width(10);
-		cout << left << "ОЦЕНКА" << right << "|";
-		cout << endl;
-		SetConsoleTextAttribute(hConsole, 7);
-		for (int i = 0; i < student.subjCount; i++)
-		{
-			cout.width(50);
-			cout << left << "|" + student.marks[i].subject << right << "|";
-			cout.width(10);
-			if (student.marks[i].mark == "не зачет") SetConsoleTextAttribute(hConsole, 12);
-			cout << left << student.marks[i].mark;
-			SetConsoleTextAttribute(hConsole, 7);
-			cout << right << "|" << endl;
+bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsCount, Student ***newStudents, int newStudentsCount) {
+	int studentsCnt = *studentsCount + newStudentsCount;
+	if (studentsCnt <= maxStudentsCount) {
+		Student **resStudents = new Student*[studentsCnt];
+		for (int i = 0; i < *studentsCount; i++) {
+			resStudents[i] = *students[i];
 		}
-		cout.width(62);
-		cout << "" << endl;
+		for (int i = *studentsCount; i < studentsCnt; i++) {
+			resStudents[i] = *newStudents[i];
+		}
+		*studentsCount = studentsCnt;
+		delete *students;
+		*students = resStudents;
 		return true;
 	}
-	else {
-		AddConsoleTextColor("Ошибка! Данные о студенте не валидны!");
+	else
+	{
+		AddConsoleTextColor("Ошибка добавления студентов! Превышено максимальное количество студентов!");
 		return false;
 	}
-
 }
-
 
 //Пример строки: "ПЯВУ - 5, Математика - 4, Веб-дизайн - зачет;"
 bool AddSubjects(Student &student, const string subjectMarks) {
 	int endPos = subjectMarks.find(";");
-	if (endPos)
+	if (endPos > 0)
 	{
 		int nextPos = -2, newSubjectsCount = student.subjCount;
 		do
@@ -154,7 +134,7 @@ bool Init(Student &student, string str)
 		if (marksPos != endPos)
 		{
 			//string strSubjs = str.substr(marksPos, endPos - marksPos);
-			AddSubjects(student, str.substr(marksPos, endPos - marksPos));
+			AddSubjects(student, str.substr(marksPos, endPos - marksPos + 1));
 		}
 		return true;
 	}
@@ -171,46 +151,27 @@ bool Init(Student &student, string str)
 	}
 }
 
-
-/*bool AddSubjects(Student &student,const string _subject,const string _mark)
+bool AddStudentsFromFile(string filePath, Student ***students, const int maxStudentsCount, int *studentsCount)
 {
-	SubjectMark *tmpMarks = new SubjectMark[student.subjCount + 1];
-	for (int i = 0; i < student.subjCount; i++) 
-	{
-		tmpMarks[i] = student.marks[i];
-	}
-	tmpMarks[student.subjCount].subject = _subject;
-	tmpMarks[student.subjCount].mark = _mark;
-	delete[] student.marks;
-	student.subjCount++;
-	student.marks = tmpMarks;
-	return true;
-}*/
-
-bool ReadFileStudents(string filePath, Student ***students, const int maxStudentsCount, int *studentsCount)
-{
-	Student **resStudents = new Student*[maxStudentsCount];
-	for (int i = 0; i < *studentsCount; i++) {
-		resStudents[i] = *students[i];
-	}
+	int maxStudentsCnt = maxStudentsCount - *studentsCount;
+	Student **newStudents = new Student*[maxStudentsCnt];
 	ifstream fileStudents (filePath);
 	if (fileStudents.is_open()) {
 		const int maxLen = 1024;
 		Student *newStudent;
-		int studentsCnt = *studentsCount;
+		int newStudentsCnt = 0;
 		char line[maxLen];
 		while (fileStudents.getline(line, streamsize(maxLen))) {
-			if (studentsCnt< maxStudentsCount) newStudent = Create();
-			if (studentsCnt< maxStudentsCount && Init(*newStudent, line)) {
-				resStudents[studentsCnt] = newStudent;
-				studentsCnt++;
+			if (newStudentsCnt < maxStudentsCnt) newStudent = Create();
+			if (newStudentsCnt < maxStudentsCnt && Init(*newStudent, line)) {
+				newStudents[newStudentsCnt] = newStudent;
+				newStudentsCnt++;
 			}
 		}
 		fileStudents.close();
-		*studentsCount = studentsCnt;
-		delete *students;
-		*students = new Student*[*studentsCount];
-		*students = resStudents;
+
+		AddStudents(students, maxStudentsCount, studentsCount, &newStudents, newStudentsCnt);
+		delete newStudents;
 		return true;
 	}
 	else {
@@ -220,4 +181,62 @@ bool ReadFileStudents(string filePath, Student ***students, const int maxStudent
 		return false;
 	}
 
+}
+
+bool PrintStudent(const Student &student)
+{
+	if (student.valid) {
+		cout.width(62);
+		cout.fill('_');
+		cout << "" << endl;
+		cout.fill(' ');
+		cout << left << "Студент: " + student.fio << endl;
+		cout << left << "Группа: " + student.group << endl;
+		cout << left << "ОЦЕНКИ" << endl;
+		cout.fill('_');
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, 10);
+		cout.width(62);
+		cout << "" << endl;
+		cout.width(50);
+		cout << left << "|ПРЕДМЕТ" << right << "|";
+		cout.width(10);
+		cout << left << "ОЦЕНКА" << right << "|";
+		cout << endl;
+		SetConsoleTextAttribute(hConsole, 7);
+		for (int i = 0; i < student.subjCount; i++)
+		{
+			cout.width(50);
+			cout << left << "|" + student.marks[i].subject << right << "|";
+			cout.width(10);
+			if (student.marks[i].mark == "не зачет") SetConsoleTextAttribute(hConsole, 12);
+			cout << left << student.marks[i].mark;
+			SetConsoleTextAttribute(hConsole, 7);
+			cout << right << "|" << endl;
+		}
+		cout.width(62);
+		cout << "" << endl;
+		return true;
+	}
+	else {
+		AddConsoleTextColor("Ошибка! Данные о студенте не валидны!\nДанные: """ + StudentToString(student) + """");
+
+		return false;
+	}
+}
+//Пример выходной строки: "Студент: Савва Максим Русланович; Группа: 19ИСТВ1; Оценки: ПЯВУ - 5, Математика - 4, Веб-дизайн - зачет;"
+string StudentToString(const Student &student) {
+	string res = "";
+	res += "Студент: " + (student.fio.empty() ? "ИМЯ ОТСУТСТВУЕТ" : student.fio) + "; ";
+	res += "Группа: " + (student.group.empty() ? "ГРУППА ОТСУТСТВУЕТ" : student.group) + "; ";
+	res += "Оценки: ";
+	if (student.subjCount) {
+		for (int i = 0; i < student.subjCount; i++) {
+			res += i > 0 ? ", " : "";
+			res += (student.marks[i].subject.empty() ? "ИМЯ ПРЕДМЕТА ОТСУТСТВУЕТ" : student.marks[i].subject) + " - ";
+			res += (student.marks[i].mark.empty() ? "ОЦЕНКА ОТСУТСТВУЕТ" : student.marks[i].mark);
+		}
+	}
+	res += ";";
+	return res;
 }

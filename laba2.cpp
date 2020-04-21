@@ -13,6 +13,7 @@ int main()
 	setlocale(LC_ALL, "Russian");
 	const int maxStudentsCount = 1000;
 	int studentsCount = 0;
+	Student **students = 0;// = new Student*[maxStudentsCount];
 	//Student **students = new Student*[maxStudentsCount];
 	/*students[0] = Create();
 	students[0]->fio = "fio";
@@ -30,11 +31,11 @@ int main()
 	string mark = "зачет";
 	AddSubj(*students[1], subject, mark);*/
 
-	Student **students = 0;// = new Student*[maxStudentsCount];
-	ReadFileStudents("/studentsMarks.txt", &students, maxStudentsCount, &studentsCount);
+	AddStudentsFromFile("/studentsMarks.txt", &students, maxStudentsCount, &studentsCount);
 	AddSubjects(*students[0], "Русский язык - не зачет;");
 	for (int i = 0; i < studentsCount; i++) {
-		PrintStudent(*students[i]);
+		//PrintStudent(*students[i]);
+		cout << StudentToString(*students[i]);
 	}
 	
 	//Clear(*students[1]);
