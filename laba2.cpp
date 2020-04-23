@@ -34,14 +34,34 @@ int main()
 	AddStudentsFromFile("/studentsMarks.txt", &students, maxStudentsCount, &studentsCount);
 	AddSubjects(*students[0], "Русский язык - не зачет;");
 	for (int i = 0; i < studentsCount; i++) {
-		//PrintStudent(*students[i]);
-		cout << StudentToString(*students[i]);
+		AddConsoleTextColor("Номер студента - " + to_string(i), 224);
+		PrintStudent(*students[i]);
+		//cout << StudentToString(*students[i]);
 	}
-	
-	//Clear(*students[1]);
-
-	//cout << "OK!";
+	SaveStudentsToFile("newStudentsMarks.txt", students, studentsCount);
 	getchar();
 	return 0;
 }
 
+bool mainMenu() {
+	AddConsoleTextColor("______МЕНЮ______", 224);
+	AddConsoleTextColor("1. Открыть файл со студентами", 14);
+	AddConsoleTextColor("2. Вывести всех студентов", 14);
+	AddConsoleTextColor("3. Сохранить студентов в файл", 14);
+	AddConsoleTextColor("4. ВЫХОД");
+	AddConsoleTextColor("Введите номер действия...", 7);
+	int selected = 0;
+	string filepath;
+	cin >> selected;
+	switch (selected)
+	{
+	case 1:
+		AddConsoleTextColor("Введите адрес файла",7);
+		cin >> filepath;
+
+		break;
+	default:
+		break;
+	}
+	return true;
+}

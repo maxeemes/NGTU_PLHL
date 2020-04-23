@@ -31,6 +31,7 @@ bool AddSubjects(Student &student, const string subjectMarks);
 bool PrintStudent(const Student &student);
 bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsCount, Student ***newStudents, int newStudentsCount);
 bool AddStudentsFromFile(const string filePath, Student ***students, const int maxStudentsCount, int *studentsCount);
-bool AddConsoleTextColor(const string error, const int color);
+bool AddConsoleTextColor(const string error, const int color = 12);
 string StudentToString(const Student &student);
+bool SaveStudentsToFile(const string filePath, Student **students, const int studentsCount);
 #endif // !_MYSTRUCT_H_

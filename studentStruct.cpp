@@ -5,10 +5,10 @@
 #include <windows.h>   // WinApi header
 
 using namespace std;
-//Цвета: 10 - зеленый, 12 - красный
+//Цвета: 10 - зеленый, 12 - красный, 7 - белый, 14 - желтый, 224 - черный на желтом фоне
 bool AddConsoleTextColor(const string error,const int color = 12) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 12);
+	SetConsoleTextAttribute(hConsole, color);
 	cout << error << endl;
 	SetConsoleTextAttribute(hConsole, 7);
 	return true;
@@ -239,4 +239,15 @@ string StudentToString(const Student &student) {
 	}
 	res += ";";
 	return res;
+}
+
+bool SaveStudentsToFile(const string filePath, Student **students, const int studentsCount) {
+	cout << "Сохранение " << studentsCount << " студентов в файл..." << endl;
+	ofstream outFile;
+	outFile.open(filePath);
+	for (int i = 0; i < studentsCount; i++) {
+		outFile << StudentToString(*students[i]) << endl;
+	}
+	AddConsoleTextColor("Студенты сохранены в файл", 10);
+	return true;
 }
