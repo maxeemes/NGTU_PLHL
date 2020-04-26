@@ -65,6 +65,14 @@ bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsC
 	}
 }
 
+bool AddStudent(Student ***students, const int maxStudentsCount, int *studentsCount, Student &newStudent) {
+
+	Student **newStudents = new Student*[1];
+	newStudents[0]
+	AddStudents(students, maxStudentsCount, studentsCount, newStudent, 1)
+	return false;
+}
+
 //Пример строки: "ПЯВУ - 5, Математика - 4, Веб-дизайн - зачет;"
 bool AddSubjects(Student &student, const string subjectMarks) {
 	int endPos = subjectMarks.find(";");

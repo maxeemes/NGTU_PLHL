@@ -12,6 +12,7 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 	const int maxStudentsCount = 1000;
+	const string defaultFilePeth = "/studentsMarks.txt";
 	int studentsCount = 0;
 	Student **students = 0;// = new Student*[maxStudentsCount];
 	//Student **students = new Student*[maxStudentsCount];
@@ -31,37 +32,75 @@ int main()
 	string mark = "зачет";
 	AddSubj(*students[1], subject, mark);*/
 
-	AddStudentsFromFile("/studentsMarks.txt", &students, maxStudentsCount, &studentsCount);
+	/*AddStudentsFromFile("/studentsMarks.txt", &students, maxStudentsCount, &studentsCount);
 	AddSubjects(*students[0], "Русский язык - не зачет;");
 	for (int i = 0; i < studentsCount; i++) {
 		AddConsoleTextColor("Номер студента - " + to_string(i), 224);
 		PrintStudent(*students[i]);
 		//cout << StudentToString(*students[i]);
 	}
-	SaveStudentsToFile("newStudentsMarks.txt", students, studentsCount);
+	SaveStudentsToFile("newStudentsMarks.txt", students, studentsCount);*/
+	int selected = 0;
+	do {
+		selected = mainMenu();
+		string filepath;
+		switch (selected)
+		{
+		case 1:
+			filepath = readFilePath(defaultFilePeth);
+			AddStudentsFromFile(filepath, &students, maxStudentsCount, &studentsCount);
+			break;
+		case 2:
+			int selectedMode = 0;
+			do {
+				printAllStudents(students, studentsCount);
+				selectedMode = modeSelectMenu();
+
+			} while (selectedMode != 3);
+			break;
+		default:
+			break;
+		}
+	} while (selected != 4);
+
 	getchar();
 	return 0;
 }
 
-bool mainMenu() {
+int mainMenu() {
 	AddConsoleTextColor("______МЕНЮ______", 224);
 	AddConsoleTextColor("1. Открыть файл со студентами", 14);
-	AddConsoleTextColor("2. Вывести всех студентов", 14);
+	AddConsoleTextColor("2. Просмотр/редактирование оценок студентов", 14);
 	AddConsoleTextColor("3. Сохранить студентов в файл", 14);
 	AddConsoleTextColor("4. ВЫХОД");
 	AddConsoleTextColor("Введите номер действия...", 7);
 	int selected = 0;
-	string filepath;
 	cin >> selected;
-	switch (selected)
-	{
-	case 1:
-		AddConsoleTextColor("Введите адрес файла",7);
-		cin >> filepath;
-
-		break;
-	default:
-		break;
-	}
-	return true;
+	return selected;
 }
+
+int modeSelectMenu() {
+	AddConsoleTextColor("______Выберите действие______", 224);
+	AddConsoleTextColor("1. Добавить студента", 14);
+	AddConsoleTextColor("2. Изменить информацию о студенте", 14);
+	AddConsoleTextColor("3. Вернуться в главное меню", 14);
+	int selected = 0;
+	cin >> selected;
+	return selected;
+}
+
+void printAllStudents(Student **students, int studentsCount) {
+	for (int i = 0; i < studentsCount; i++) {
+		AddConsoleTextColor("Номер студента - " + to_string(i), 224);
+		PrintStudent(*students[i]);
+	}
+}
+
+string readFilePath(string defaultPath) {
+	string filePath = "";
+	AddConsoleTextColor("Введите адрес файла или оставьте поле пустым...", 14);
+	cin >> filePath;
+	filePath = filePath.length() > 1 ? filePath : defaultPath;
+	return defaultPath;
+}
+
