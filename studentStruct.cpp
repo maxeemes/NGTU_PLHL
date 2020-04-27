@@ -66,10 +66,10 @@ bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsC
 }
 
 bool AddStudent(Student ***students, const int maxStudentsCount, int *studentsCount, Student &newStudent) {
-
 	Student **newStudents = new Student*[1];
-	newStudents[0]
-	AddStudents(students, maxStudentsCount, studentsCount, newStudent, 1)
+	newStudents[0] = &newStudent;
+	AddStudents(students, maxStudentsCount, studentsCount, &newStudents, 1);
+	delete newStudents;
 	return false;
 }
 

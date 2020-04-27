@@ -29,6 +29,7 @@ bool Kill(Student *student);
 //bool AddSubjects(Student &student,const string _subject,const string _mark);
 bool AddSubjects(Student &student, const string subjectMarks);
 bool PrintStudent(const Student &student);
+bool AddStudent(Student ***students, const int maxStudentsCount, int *studentsCount, Student &newStudent);
 bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsCount, Student ***newStudents, int newStudentsCount);
 bool AddStudentsFromFile(const string filePath, Student ***students, const int maxStudentsCount, int *studentsCount);
 bool AddConsoleTextColor(const string error, const int color = 12);

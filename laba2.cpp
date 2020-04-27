@@ -55,8 +55,22 @@ int main()
 			do {
 				printAllStudents(students, studentsCount);
 				selectedMode = modeSelectMenu();
-
+				switch (selectedMode)
+				{
+				case 1:
+					userStudentAdd(&students, maxStudentsCount, &studentsCount);
+					break;
+				case 2:
+					userStudentEdit(&students, studentsCount);
+					break;
+				default:
+					break;
+				}
 			} while (selectedMode != 3);
+			break;
+		case 3:
+			AddConsoleTextColor("______Сохранение студентов в файл______", 224);
+
 			break;
 		default:
 			break;
@@ -70,7 +84,7 @@ int main()
 int mainMenu() {
 	AddConsoleTextColor("______МЕНЮ______", 224);
 	AddConsoleTextColor("1. Открыть файл со студентами", 14);
-	AddConsoleTextColor("2. Просмотр/редактирование оценок студентов", 14);
+	AddConsoleTextColor("2. Просмотр/редактирование информации о студентах", 14);
 	AddConsoleTextColor("3. Сохранить студентов в файл", 14);
 	AddConsoleTextColor("4. ВЫХОД");
 	AddConsoleTextColor("Введите номер действия...", 7);
@@ -102,5 +116,80 @@ string readFilePath(string defaultPath) {
 	cin >> filePath;
 	filePath = filePath.length() > 1 ? filePath : defaultPath;
 	return defaultPath;
+}
+
+void userAddStudentsFromFile(Student ***students, const int maxStudentsCount, int *studentsCount) {
+	do {
+
+	}while()
+}
+
+bool userStudentCreate(Student &newStudent) {
+	AddConsoleTextColor("______Создание студента______", 224);
+	AddConsoleTextColor("Введите информацию о студенте в формате ""Студент: Иванов Иван Иванович; Группа: имя_группы; Оценки: Математика - 4, Русский язык - зачет;""", 14);
+	string sNewStudent = "";
+	cin >> sNewStudent;
+	if (Init(newStudent, sNewStudent)) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void userStudentAdd(Student ***students, const int maxStudentsCount, int *studentsCount) {
+	Student *newStudent = new Student();
+	AddConsoleTextColor("______Добавление студента______", 224);
+	bool isCreated = false, isExit = false;
+
+	while (userStudentCreate(*newStudent) == false && isExit == false)
+	{
+		AddConsoleTextColor("Попробовать создать студента снова?\n0. Да\t1. Нет");
+		cin >> isExit;
+	}
+	if (isExit == false) {
+		AddStudent(students, maxStudentsCount, studentsCount, *newStudent);
+	}
+	else {
+		Kill(newStudent);
+	}
+}
+
+bool selectStudentNum(int &studentNum, const int studentCount) {
+	cin >> studentNum;
+	if (studentNum >= 0 && studentNum < studentCount) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void userStudentEdit(Student ***students,const int studentsCount) {
+	AddConsoleTextColor("______Изменение студента______", 224);
+	AddConsoleTextColor("Введите номер студента, которого хотите изменить...", 14);
+	int studentNum = -1;
+	bool isExit = false;
+	while (selectStudentNum(studentNum, studentsCount) && isExit == false)
+	{
+		AddConsoleTextColor("Ошибка! Неверный номер студента\nВвести снова?\n0. Да\t1. Нет");
+		cin >> isExit;
+	}
+	if (isExit == false) {
+		Student *newStudent = new Student();
+		while (userStudentCreate(*newStudent) == false && isExit == false)
+		{
+			AddConsoleTextColor("Попробовать создать студента снова?\n0. Да\t1. Нет");
+			cin >> isExit;
+		}
+		if (isExit == false) {
+			Kill(*students[studentNum]);
+			students[studentNum] = &newStudent;
+		}
+		else {
+			Kill(newStudent);
+		}
+	}
 }
 
