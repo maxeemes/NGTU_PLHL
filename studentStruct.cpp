@@ -6,7 +6,7 @@
 
 using namespace std;
 //÷вета: 10 - зеленый, 12 - красный, 7 - белый, 14 - желтый, 224 - черный на желтом фоне
-bool AddConsoleTextColor(const string error,const int color = 12) {
+bool AddConsoleTextColor(const string error,const int color) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, color);
 	cout << error << endl;
@@ -38,7 +38,7 @@ bool Clear(Student &student)
 
 bool Kill(Student *student)
 {
-	delete student->marks;
+	delete[] student->marks;
 	delete student;
 	return true;
 }
@@ -50,8 +50,8 @@ bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsC
 		for (int i = 0; i < *studentsCount; i++) {
 			resStudents[i] = *students[i];
 		}
-		for (int i = *studentsCount; i < studentsCnt; i++) {
-			resStudents[i] = *newStudents[i];
+		for (int i = *studentsCount, j = 0; i < studentsCnt; i++, j++) {
+			resStudents[i] = *newStudents[j];
 		}
 		*studentsCount = studentsCnt;
 		delete *students;
