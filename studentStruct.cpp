@@ -44,14 +44,17 @@ bool Kill(Student *student)
 }
 
 bool AddStudents(Student ***students, const int maxStudentsCount, int *studentsCount, Student ***newStudents, int newStudentsCount) {
+	cout << "Добавление " << newStudentsCount << " студентов..." << endl;
 	int studentsCnt = *studentsCount + newStudentsCount;
 	if (studentsCnt <= maxStudentsCount) {
 		Student **resStudents = new Student*[studentsCnt];
+		Student **localNewStudents = *newStudents;
+		Student **localStudents = *students;
 		for (int i = 0; i < *studentsCount; i++) {
-			resStudents[i] = *students[i];
+			resStudents[i] = localStudents[i];
 		}
 		for (int i = *studentsCount, j = 0; i < studentsCnt; i++, j++) {
-			resStudents[i] = *newStudents[j];
+			resStudents[i] = localNewStudents[j];
 		}
 		*studentsCount = studentsCnt;
 		delete *students;
@@ -161,6 +164,7 @@ bool Init(Student &student, string str)
 
 bool AddStudentsFromFile(string filePath, Student ***students, const int maxStudentsCount, int *studentsCount)
 {
+	AddConsoleTextColor("Чтение студентов из файла " + filePath + "...", 7);
 	int maxStudentsCnt = maxStudentsCount - *studentsCount;
 	Student **newStudents = new Student*[maxStudentsCnt];
 	ifstream fileStudents (filePath);
@@ -168,12 +172,22 @@ bool AddStudentsFromFile(string filePath, Student ***students, const int maxStud
 		const int maxLen = 1024;
 		Student *newStudent;
 		int newStudentsCnt = 0;
-		char line[maxLen];
+		/*char line[maxLen];
 		while (fileStudents.getline(line, streamsize(maxLen))) {
 			if (newStudentsCnt < maxStudentsCnt) newStudent = Create();
 			if (newStudentsCnt < maxStudentsCnt && Init(*newStudent, line)) {
 				newStudents[newStudentsCnt] = newStudent;
 				newStudentsCnt++;
+			}
+		}*/
+		for (string line; getline(fileStudents, line);) {
+			if (newStudentsCnt < maxStudentsCnt)
+			{
+				newStudent = Create();
+				if (Init(*newStudent, line)) {
+					newStudents[newStudentsCnt] = newStudent;
+					newStudentsCnt++;
+				}
 			}
 		}
 		fileStudents.close();
@@ -250,7 +264,7 @@ string StudentToString(const Student &student) {
 }
 
 bool SaveStudentsToFile(const string filePath, Student **students, const int studentsCount) {
-	cout << "Сохранение " << studentsCount << " студентов в файл..." << endl;
+	cout << "Сохранение " << studentsCount << " студентов в файл " + filePath + "..." << endl;
 	ofstream outFile;
 	outFile.open(filePath);
 	for (int i = 0; i < studentsCount; i++) {
