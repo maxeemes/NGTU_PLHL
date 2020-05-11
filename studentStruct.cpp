@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <windows.h>   // WinApi header
+#include <windows.h>
 
 using namespace std;
 //÷вета: 10 - зеленый, 12 - красный, 7 - белый, 14 - желтый, 224 - черный на желтом фоне
