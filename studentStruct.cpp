@@ -270,6 +270,7 @@ bool SaveStudentsToFile(const string filePath, Student **students, const int stu
 	for (int i = 0; i < studentsCount; i++) {
 		outFile << StudentToString(*students[i]) << endl;
 	}
+	outFile.close();
 	AddConsoleTextColor("Студенты сохранены в файл", 10);
 	return true;
 }
